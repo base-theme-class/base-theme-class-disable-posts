@@ -58,7 +58,8 @@ namespace BaseThemeClass;
 
 class DisablePosts {
 
-  function remove_posts_admin() {
+  function __construct( $self ) {
+    $this->self = $self;
     add_action( 'admin_menu',     [ $this, 'remove_posts_sidebar'    ] );
     add_action( 'admin_bar_menu', [ $this, 'change_default_new_link' ], PHP_INT_MAX-1 );
     return $this;
@@ -71,10 +72,10 @@ class DisablePosts {
   //   and change the default "New" link to "page" of if type is passed type..
   function change_default_new_link( $wp_admin_bar, $type = '', $title = '' ) {
     if( $type === '' ) {
-      $type = array_key_exists( 'DEFAULT_TYPE', $this->self->defn )
-            ? $this->self->defn[  'DEFAULT_TYPE' ]
-            : DEFAULT_DEFN[ 'DEFAULT_TYPE' ]
-            ;
+      $type = $this->self->defn( 'DEFAULT_TYPE' );
+      if( !$type ) {
+        $type = DEFAULT_DEFN[ 'DEFAULT_TYPE' ];
+      }
     }
     if( $title === '' ) {
       $title = ucfirst( $type );
@@ -91,4 +92,4 @@ class DisablePosts {
  //   $wp_admin_bar->remove_node('new-post');
     $wp_admin_bar->remove_menu('wp-logo');   // Not to do with posts - but good to get rid of in admin interface!
   }
-
+}
